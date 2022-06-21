@@ -62,6 +62,8 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         #check if done
         dones = np.zeros((observations.shape[0],))
         dones[body_angle>1.0] = 1
+        # convert to list of python bool
+        dones = [bool(x) for x in dones]
 
         #return
         if not batch_mode:
@@ -95,8 +97,8 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def _get_obs(self):
 
         self.obs_dict = {}
-        self.obs_dict['joints_pos'] = self.sim.data.qpos.flat.copy()
-        self.obs_dict['joints_vel'] = self.sim.data.qvel.flat.copy()
+        self.obs_dict['joints_pos'] = self.data.qpos.copy()
+        self.obs_dict['joints_vel'] = self.data.qvel.copy()
 
         return np.concatenate([
             self.obs_dict['joints_pos'], #9

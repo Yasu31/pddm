@@ -66,12 +66,12 @@ class Dyn_Model:
 
     def create_placeholders(self):
 
-        self.inputs_ = tf.placeholder(
+        self.inputs_ = tf.compat.v1.placeholder(
             self.tf_datatype,
             shape=[self.ensemble_size, None, self.K, self.inputSize],
             name='nn_inputs')
 
-        self.labels_ = tf.placeholder(
+        self.labels_ = tf.compat.v1.placeholder(
             self.tf_datatype,
             shape=[None, self.outputSize],
             name='nn_labels')
@@ -80,7 +80,7 @@ class Dyn_Model:
     def define_forward_pass(self):
 
         #optimizer
-        self.opt = tf.train.AdamOptimizer(self.params.lr)
+        self.opt = tf.compat.v1.train.AdamOptimizer(self.params.lr)
 
         self.curr_nn_outputs = []
         self.mses = []
@@ -100,8 +100,8 @@ class Dyn_Model:
             self.mses.append(this_mse)
 
             # this network's weights
-            this_theta = tf.get_collection(
-                tf.GraphKeys.TRAINABLE_VARIABLES, scope=str(i))
+            this_theta = tf.compat.v1.get_collection(
+                tf.compat.v1.GraphKeys.TRAINABLE_VARIABLES, scope=str(i))
 
             # train step for this network
             gv = [(g, v) for g, v in self.opt.compute_gradients(

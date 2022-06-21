@@ -14,22 +14,22 @@
 
 
 import tensorflow as tf
+from tf_slim.layers import layers as _layers
 
 
 def feedforward_network(inputStates, inputSize, outputSize, num_fc_layers,
                         depth_fc_layers, tf_datatype, scope):
 
-    with tf.variable_scope(str(scope)):
+    with tf.compat.v1.variable_scope(str(scope)):
 
         #concat K entries together [bs x K x sa] --> [bs x ksa]
-        inputState = tf.layers.flatten(inputStates)
+        inputState = tf.compat.v1.layers.flatten(inputStates)
 
         #vars
         intermediate_size = depth_fc_layers
         reuse = False
-        initializer = tf.contrib.layers.xavier_initializer(
-            uniform=False, seed=None, dtype=tf_datatype)
-        fc = tf.contrib.layers.fully_connected
+        initializer = tf.initializers.GlorotUniform()
+        fc = _layers.fully_connected
 
         # make hidden layers
         for i in range(num_fc_layers):

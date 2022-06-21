@@ -42,8 +42,8 @@ def run_job(args, save_dir=None):
     if args.continue_run>-1:
         save_dir = os.path.join(SCRIPT_DIR, args.continue_run_filepath)
 
-    tf.reset_default_graph()
-    with tf.Session(config=get_gpu_config(args.use_gpu, args.gpu_frac)) as sess:
+    tf.compat.v1.reset_default_graph()
+    with tf.compat.v1.Session(config=get_gpu_config(args.use_gpu, args.gpu_frac)) as sess:
 
         ##############################################
         ### initialize some commonly used parameters (from args)
@@ -58,7 +58,7 @@ def run_job(args, save_dir=None):
 
         ### set seeds
         npr.seed(args.seed)
-        tf.set_random_seed(args.seed)
+        tf.compat.v1.set_random_seed(args.seed)
 
         #######################
         ### hardcoded args
@@ -191,7 +191,7 @@ def run_job(args, save_dir=None):
                                  execute_sideRollouts, plot_sideRollouts, args)
 
         ### init TF variables
-        sess.run(tf.global_variables_initializer())
+        sess.run(tf.compat.v1.global_variables_initializer())
 
         ##############################################
         ###  saver
@@ -283,7 +283,7 @@ def run_job(args, save_dir=None):
                         saver.tf_saver.restore(sess, restore_path)
                         print("\n\nModel restored from ", restore_path, "\n\n")
             else:
-                sess.run(tf.global_variables_initializer())
+                sess.run(tf.compat.v1.global_variables_initializer())
 
             #number of training epochs
             if counter==0: nEpoch_use = args.nEpoch_init

@@ -60,14 +60,14 @@ def get_gpu_config(use_gpu, gpu_frac=0.6):
 
     if use_gpu:
         gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=gpu_frac)
-        config = tf.ConfigProto(
+        config = tf.compat.v1.ConfigProto(
             gpu_options=gpu_options,
             log_device_placement=False,
             allow_soft_placement=True,
             inter_op_parallelism_threads=1,
             intra_op_parallelism_threads=1)
     else:
-        config = tf.ConfigProto(device_count={'GPU': 0})
+        config = tf.compat.v1.ConfigProto(device_count={'GPU': 0})
     return config
 
 

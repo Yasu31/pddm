@@ -24,17 +24,19 @@ class EnvSpec(object):
 class GymEnv(object):
     def __init__(self, env_name):
         env = gym.make(env_name)
+        env.reset()
         self.env = env
         self.env_id = env.spec.id
 
-        self._horizon = env.spec.timestep_limit
+        self._horizon = env.spec.max_episode_steps
+        print(f"Horizon: {self._horizon}")
 
         try:
             self._action_dim = self.env.env.action_dim
         except AttributeError:
             self._action_dim = self.env.env.action_space.shape[0]
 
-        self._observation_dim = self.env.env.obs_dim
+        self._observation_dim = self.env.env.observation_space.shape[0]
 
         # Specs
         self.spec = EnvSpec(self._observation_dim, self._action_dim, self._horizon)

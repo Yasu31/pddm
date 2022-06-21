@@ -43,7 +43,8 @@ class CollectSamples(object):
             result = pool.apply_async(
                 self.do_rollout,
                 args=(steps_per_rollout, rollout_number, visualization_frequency),
-                callback=self.mycallback)
+                callback=self.mycallback,
+                error_callback=self.myerrorcallback)
 
         pool.close()  #not going to add anything else to the pool
         pool.join()  #wait for the processes to terminate
@@ -52,6 +53,9 @@ class CollectSamples(object):
 
     def mycallback(self, x):
         self.rollouts.append(x)
+    def myerrorcallback(self, x):
+        print("error callback called")
+        print(x)
 
     def do_rollout(self, steps_per_rollout, rollout_number, visualization_frequency):
 

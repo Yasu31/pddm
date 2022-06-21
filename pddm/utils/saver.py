@@ -37,7 +37,7 @@ class Saver:
             os.makedirs(self.save_dir + '/training_data')
 
         ### tensorflow saver
-        self.tf_saver = tf.train.Saver(max_to_keep=0)
+        self.tf_saver = tf.compat.v1.train.Saver(max_to_keep=0)
 
     def save_initialData(self, params, rollouts_trainRand, rollouts_valRand):
 

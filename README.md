@@ -19,44 +19,8 @@ Please note that this is research code, and as such, is still under construction
 
 ## A. Getting started ##
 
-#### 1) Mujoco:
-Download and install mujoco (v1.5) to ~/.mujoco, following their instructions<br/>
-(including setting `LD_LIBRARY_PATH` in your `~/.bashrc` file)
-
-#### 2) If using GPU:
-Setup Cuda and CUDNN verions based on your system specs.<br/>
-Recommended: Cuda 8, 9, or 10.<br/>
-Also, add the following to your `~/.bashrc`:
-```bash
-alias MJPL='LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so:/usr/lib/nvidia-367/libGL.so'
-```
-
 #### 3) Setup this repo:
-Without GPU support:
-```bash
-cd <path_to_pddm>
-conda env create -f environment.yml
-source activate pddm-env
-pip install -e .
-```
-
-Or, for use with GPU:
-```bash
-cd <path_to_pddm>
-conda env create -f environment_gpu.yml
-source activate pddm-gpu-env
-pip install -e .
-```
-
-Notes:<br/>
-a) For environment_gpu to work, you'll need a working gpu and cuda/cudnn installation first.<br/>
-b) Depending on your cuda/cudnn versions, you might need to change the tensorflow-gpu version specified in environment_gpu.yml. Suggestions are 1.13.1 for cuda 10, 1.12.0 for cuda 9, or 1.4.1 for cuda 8. <br/>
-c) Before running any code, type the following into your terminal to activate the conda environment: <br/>
-`source activate pddm-env` <br/>
-d) The MJPL before the python visualization commands below are needed only if working with GPU  <br/><br/>
-
-
-
+As there was an error with the protobuf version when setting up the conda environment on Ubuntu 22.04, I changed the codebase to run in Python 3.10 with the latest libraries, and thus the conda environment from the original repo isn't necessary.
 
 ## B. Quick Overview ##
 
@@ -73,8 +37,8 @@ To see available parameters to set, see the files in the configs folder, as well
 
 Cheetah:
 ```bash
-python train.py --config ../config/short_cheetah_test.txt --output_dir ../output --use_gpu
-MJPL python visualize_iteration.py --job_path ../output/short_cheetah_test --iter_num 0
+python3 train.py --config ../config/short_cheetah_test.txt --output_dir ../output
+python3 visualize_iteration.py --job_path ../output/short_cheetah_test --iter_num 0
 ```
 
 Ant:
