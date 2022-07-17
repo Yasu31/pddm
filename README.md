@@ -20,7 +20,17 @@ Please note that this is research code, and as such, is still under construction
 ## A. Getting started ##
 
 #### 3) Setup this repo:
-As there was an error with the protobuf version when setting up the conda environment on Ubuntu 22.04, I changed the codebase to run in Python 3.10 with the latest libraries, and thus the conda environment from the original repo isn't necessary.
+```bash
+# create and activate new virtual environment
+python3 -m venv ~/venv/pddm
+source ~/venv/pddm/bin/activate
+
+# install required packages
+pip install -r requirements.txt
+# install this package
+pip install -e .
+```
+As there was an error with the protobuf version when setting up the conda environment on Ubuntu 22.04, I changed it to use the python venv instead.
 
 ## B. Quick Overview ##
 
@@ -37,8 +47,8 @@ To see available parameters to set, see the files in the configs folder, as well
 
 Cheetah:
 ```bash
-python3 train.py --config ../config/short_cheetah_test.txt --output_dir ../output
-python3 visualize_iteration.py --job_path ../output/short_cheetah_test --iter_num 0
+python train.py --config ../config/short_cheetah_test.txt --output_dir ../output
+python visualize_iteration.py --job_path ../output/short_cheetah_test --iter_num 0
 ```
 
 Ant:
