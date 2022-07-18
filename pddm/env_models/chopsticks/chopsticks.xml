@@ -1,0 +1,67 @@
+<mujoco model='chopsticks'>
+    <include file='../scenes/basic_scene.xml'/>
+    <compiler angle="radian"/>
+    <default>
+        <default class="slide">
+            <position kp="20" ctrllimited="true"/>
+            <!-- "armature" is rotor inertia and said to improve stability and physical accuracy? -->
+            <!-- damping and armature values are arbitrary -->
+            <joint type="slide" limited="true" damping=".1" armature="0.001"/>
+        </default>
+        <default class="hinge">
+            <position kp="10" ctrllimited="true"/>
+            <joint type="hinge" limited="true" damping=".1" armature="0.001"/>
+        </default>
+    </default>
+
+    <worldbody>
+        <body pos="0 0 0.35" name="cs0">
+            <!-- one half of chopstick -->
+            <geom type="cylinder" size="0.0025 0.15" pos="0 0 -0.15" rgba="0.65 0.16 0.16 1"/>
+            <joint name="cs0_x" axis="1 0 0" range="-0.15 0.15" class="slide"/>
+            <joint name="cs0_z" axis="0 0 1" range="-0.05 0.2" class="slide"/>
+            <joint name="cs0_rot" axis="0 1 0" range="-1.5 1.5" class="hinge"/>
+            <body name="cs1" pos="0.03 0 0">
+                <!-- other half of chopstick -->
+                <!-- set position so that hinge joint is in middle of two sticks -->
+                <geom type="cylinder" size="0.0025 0.15" pos="0.03 0 -0.15" rgba="0.65 0.16 0.16 1"/>
+                <!-- limit the range to what is feasible for chopsticks -->
+                <joint name="cs1_x" axis="1 0 0" range="-0.07 0." class="slide"/>
+                <joint name="cs1_z" axis="0 0 1" range="-0.03 0.03" class="slide"/>
+                <joint name="cs1_rot" axis="0 1 0" range="-0.5 0.5" class="hinge"/>
+            </body>
+        </body>
+
+        <!-- create objects to be picked up -->
+        <body name="obj_A">
+            <geom type="cylinder" size="0.015" fromto="0.1 0.025 0.06 0.1 -0.025 0.06" rgba="1 1 1 1"/>
+            <geom type="cylinder" size="0.016" fromto="0.1 0.024 0.06 0.1 -0.024 0.06" rgba="0 0 0 1"/>
+            <joint name="obj_A_x" type="slide" axis="1 0 0" limited="false"/>
+            <joint name="obj_A_z" type="slide" axis="0 0 1" limited="false"/>
+            <joint name="obj_A_rot" type="hinge" axis="0 1 0" limited="false"/>
+        </body>
+
+        <!-- for keeping object at certain height -->
+        <body name="rail_pY">
+            <geom type="cylinder" size="0.005" fromto="0.05 0.02 0.03 0.15 0.02 0.03" rgba="0 0 0 1" />
+        </body>
+        <body name="rail_nY">
+            <geom type="cylinder" size="0.005" fromto="0.05 -0.02 0.03 0.15 -0.02 0.03" rgba="0 0 0 1" />
+        </body>
+
+    </worldbody>
+
+    <actuator>
+        <!-- copy over the joint range to ctrlrange here -->
+        <position name="cs0_x" joint="cs0_x" class="slide" ctrlrange="-0.15 0.15"/>
+        <position name="cs0_z" joint="cs0_z" class="slide" ctrlrange="-0.05 0.2"/>
+        <position name="cs0_rot" joint="cs0_rot" class="hinge" ctrlrange="-1.5 1.5"/>
+        <position name="cs1_x" joint="cs1_x" class="slide" ctrlrange="-0.07 0."/>
+        <position name="cs1_z" joint="cs1_z" class="slide" ctrlrange="-0.03 0.03"/>
+        <position name="cs1_rot" joint="cs1_rot" class="hinge" ctrlrange="-0.5 0.5"/>
+    </actuator>
+
+    <contact>
+        <!-- todo -->
+    </contact>
+</mujoco>
