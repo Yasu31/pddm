@@ -108,7 +108,7 @@ class DClawTurnEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         joint_pos = observations[:, :self.n_jnt]
         joint_vel = observations[:, self.n_jnt:2*self.n_jnt]
         zeros = np.zeros(target_pos.shape)
-        dones = zeros.copy() #this task is never terminated
+        dones = [False] * len(zeros) #this task is never terminated
 
         # screw position
         screw_dist = np.abs(angle_difference(screw_pos, target_pos))
@@ -188,7 +188,7 @@ class DClawTurnEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                                 self.obs_dict['hand_qv'],
                                 self.obs_dict['lid_qp'],
                                 self.obs_dict ['lid_qv'],
-                                self.obs_dict['goal'] ])
+                                self.obs_dict['goal'] ], dtype=np.float32)
 
     def reset_model(self):
 
