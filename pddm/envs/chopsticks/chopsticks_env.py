@@ -11,11 +11,15 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     draws heavily from DClawTurnEnv
     python train.py --config ../config/chopsticks.txt --output_dir ../output
     python visualize_iteration.py --job_path ../output/chopsticks --iter_num 0
+
+    I'm not actually even sure that the correct state values are gotten
     """
     def __init__(self):
         print("creatng class ChopsticksEnv")
         self.time = 0
-        # what is this for
+        # this variable is used to render every once in a while?
+        # but when I change this value the performance seems to change?
+        # when this is set to 40 during training and to 4 in visualization it seems to create interesting movement... though I have no idea why...
         self.skip = 40
 
         self.n_jnt = 6
@@ -27,8 +31,8 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         # todo maybe set pos_bounds and vel_bounds here
         self.robot = Robot(n_jnt=self.n_jnt, n_obj=self.n_obj, n_dofs=self.n_dofs, 
-        # put in arbitrary limits here for now
-        pos_bounds=[[-1, 1]]*self.n_dofs, vel_bounds=[[-1, 1]]*self.n_dofs)
+                           # put in arbitrary limits here for now
+                           pos_bounds=[[-1, 1]]*self.n_dofs, vel_bounds=[[-1, 1]]*self.n_dofs)
 
         self.initializing = True
         # load mujoco model
@@ -39,7 +43,11 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         # set range for action
         self.act_mid = np.mean(self.model.actuator_ctrlrange, axis=1)
         self.act_rng = 0.5 * np.ptp(self.model.actuator_ctrlrange, axis=1)
-        assert self.act_mid.shape[0] == self.act_rng.shape[0]
+        assert self.act_mid.shape[0] == self.act_rng.shape[0] == self.n_jnt
+
+        print(f"self.init_qpos: {self.init_qpos}")
+
+
 
     def get_reward(self, observations, actions):
         """
@@ -62,6 +70,7 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         object_pos = observations[:, 12:15]
         object_z = object_pos[:, 2]
 
+        # finish episode when object is lifted above a threshold
         dones = [bool(height > 0.1) for height in object_z]
         reward = object_z  # object higher = better
     
@@ -112,9 +121,17 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         return np.concatenate([cs_qp, cs_qv, obj_qp, obj_qv], dtype=np.float32)
     
     def reset_model(self):
+        # these are read far away in mb_env.py and saved to the pickle file thing
+        self.reset_pose = self.init_qpos
+        self.reset_vel = self.init_qvel
+        self.reset_goal = np.zeros(0)
+    
         # no randomization for now
-        self.robot.reset(self, self.init_qpos, self.init_qvel)
-        self.sim.forward()
-        print("qpos: ", self.sim.data.qpos)
-        return self._get_obs()
+        
+        return self.do_reset(self.reset_pose, self.reset_vel, self.reset_goal)
 
+    def do_reset(self, reset_pose, reset_vel, reset_goal):
+        print(f"reset_pose: {reset_pose}")
+        self.robot.reset(self, reset_pose, reset_vel)
+        self.sim.forward()
+        return self._get_obs()
