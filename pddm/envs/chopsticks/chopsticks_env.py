@@ -9,19 +9,21 @@ from pddm.envs.robot import Robot
 class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     """
     draws heavily from DClawTurnEnv
+    python train.py --config ../config/chopsticks.txt --output_dir ../output
+    python visualize_iteration.py --job_path ../output/chopsticks --iter_num 0
     """
     def __init__(self):
+        print("creatng class ChopsticksEnv")
         self.time = 0
         # what is this for
-        self.frame_skip = 40
+        self.skip = 40
 
         self.n_jnt = 6
-        self.n_obj = 1
+        self.n_obj = 3  # DoFs of object
         self.n_dofs = self.n_jnt + self.n_obj
 
         import os
         xml_path = os.path.join(os.path.dirname(__file__), '..', '..', 'env_models', 'chopsticks', 'chopsticks.xml')
-        print("xml_path: ", xml_path)
 
         # todo maybe set pos_bounds and vel_bounds here
         self.robot = Robot(n_jnt=self.n_jnt, n_obj=self.n_obj, n_dofs=self.n_dofs, 
@@ -30,7 +32,7 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         self.initializing = True
         # load mujoco model
-        super().__init__(xml_path, self.frame_skip)
+        super().__init__(xml_path, self.skip)
         utils.EzPickle.__init__(self)
         self.initializing = False
 
@@ -57,10 +59,10 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             batch_mode = True
 
         # recover data
-        object_pos = observations[:, 18:21]
+        object_pos = observations[:, 12:15]
         object_z = object_pos[:, 2]
 
-        dones = [object_z > 0.1]
+        dones = [bool(height > 0.1) for height in object_z]
         reward = object_z  # object higher = better
     
         if not batch_mode:
@@ -72,7 +74,9 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         """
         what is this and how is it different from get_reward?
         """
-        pass
+        object_pos = obs[12:15]
+        object_z = object_pos[2]
+        return object_z
 
     def step(self, action):
         action = np.clip(action, -1, 1)
@@ -80,7 +84,7 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             # convert value between -1 ~ 1 to action range
             action = self.act_mid + self.act_rng * action
         
-        self.robot.step(self, action, step_duration=self.frame_skip * self.model.opt.timestep)
+        self.robot.step(self, action, step_duration=self.skip * self.model.opt.timestep)
 
         obs = self._get_obs()
         reward, done = self.get_reward(obs, action)
@@ -88,7 +92,6 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         env_info = {"time": self.time,
                     "obs_dict": self.obs_dict,
-                    "rewards": self.rewards_dict,
                     "score": score}
         return obs, reward, done, env_info
 
