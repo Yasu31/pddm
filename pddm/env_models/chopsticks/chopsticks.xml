@@ -15,16 +15,17 @@
     </default>
 
     <worldbody>
-        <body pos="0 0 0.35" name="cs0">
+        <!-- change pos to 0 0 0.35 if you want to avoid the chopstick being positioned right above the object -->
+        <body pos="0.07 0 0.35" name="cs0">
             <!-- one half of chopstick -->
-            <geom type="cylinder" size="0.0025 0.15" pos="0 0 -0.15" rgba="0.65 0.16 0.16 1"/>
+            <geom name="cs0" type="cylinder" size="0.0025 0.15" pos="0 0 -0.15" rgba="0.65 0.16 0.16 1"/>
             <joint name="cs0_x" axis="1 0 0" range="-0.15 0.15" class="slide"/>
             <joint name="cs0_z" axis="0 0 1" range="-0.05 0.2" class="slide"/>
             <joint name="cs0_rot" axis="0 1 0" range="-1.5 1.5" class="hinge"/>
             <body name="cs1" pos="0.03 0 0">
                 <!-- other half of chopstick -->
                 <!-- set position so that hinge joint is in middle of two sticks -->
-                <geom type="cylinder" size="0.0025 0.15" pos="0.03 0 -0.15" rgba="0.65 0.16 0.16 1"/>
+                <geom name="cs1" type="cylinder" size="0.0025 0.15" pos="0.03 0 -0.15" rgba="0.65 0.16 0.16 1"/>
                 <!-- limit the range to what is feasible for chopsticks -->
                 <joint name="cs1_x" axis="1 0 0" range="-0.07 0." class="slide"/>
                 <joint name="cs1_z" axis="0 0 1" range="-0.03 0.03" class="slide"/>
@@ -33,9 +34,10 @@
         </body>
 
         <!-- create objects to be picked up -->
-        <body name="obj_A">
-            <geom type="cylinder" size="0.015" fromto="0.1 0.025 0.06 0.1 -0.025 0.06" rgba="1 1 1 1"/>
-            <geom type="cylinder" size="0.016" fromto="0.1 0.024 0.06 0.1 -0.024 0.06" rgba="0 0 0 1"/>
+        <body name="obj_A" pos="0.1 0 0.06">
+            <!-- hack-ish way to make it easier to pick up: make it super light -->
+            <geom type="cylinder" size="0.015" fromto="0. 0.025 0. 0. -0.025 0." rgba="1 1 1 1" mass="0.005"/>
+            <geom name="obj_A" type="cylinder" size="0.016" fromto="0. 0.024 0. 0. -0.024 0." rgba="0 0 0 1" mass="0.001"/>
             <joint name="obj_A_x" type="slide" axis="1 0 0" limited="false"/>
             <joint name="obj_A_z" type="slide" axis="0 0 1" limited="false"/>
             <joint name="obj_A_rot" type="hinge" axis="0 1 0" limited="false"/>
@@ -62,6 +64,8 @@
     </actuator>
 
     <contact>
-        <!-- todo -->
+        <!-- try to increase friction for chopstick-object contact (not sure how well it works) -->
+        <pair geom1="cs0" geom2="obj_A" friction="10 10"/>
+        <pair geom1="cs1" geom2="obj_A" friction="10 10"/>
     </contact>
 </mujoco>
