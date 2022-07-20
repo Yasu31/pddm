@@ -1,0 +1,69 @@
+{
+    'job_name': ['chopsticks'],
+    'seed': [0],
+
+    'env_name': ['pddm_chopsticks-v0'],
+    'rollout_length': [100],
+    'num_iters': [1],
+    'num_trajectories_per_iter': [3],
+
+    'continue_run': [-1],
+    'continue_run_filepath': [''],
+
+    'use_ground_truth_dynamics': [False],
+    'visualize_MPC_rollout': [False],
+    'print_minimal': [False],
+
+    'make_aggregated_dataset_noisy': [True],
+    'make_training_dataset_noisy': [True],
+    'rollouts_noise_actions': [False],
+    'rollouts_document_noised_actions': [False],
+
+    'load_existing_random_data': [False],
+    'num_rand_rollouts_train': [200],
+    'num_rand_rollouts_val': [50],
+    'rand_rollout_length': [100],
+    'use_threading': [True],
+
+    'rand_policy_sample_velocities': [False],
+    'rand_policy_vel_min': [0],
+    'rand_policy_vel_max': [0],
+    'rand_policy_hold_action': [1],
+
+##########################
+##### dynamics model
+##########################
+
+## arch
+'num_fc_layers': [2],
+'depth_fc_layers': [250],
+'ensemble_size': [3],
+'K': [1],
+
+## model training
+'warmstart_training': [False],
+'always_use_savedModel': [False],
+'batchsize': [512],
+'lr': [0.001],
+'nEpoch': [20],
+'nEpoch_init': [20],
+
+##########################
+##### controller
+##########################
+
+## MPC
+'horizon': [20],
+'num_control_samples': [700],
+'controller_type': ['mppi'],
+
+## cem
+'cem_max_iters': [3],
+'cem_num_elites': [5],
+
+## mppi
+'mppi_kappa': [1.0],
+'mppi_mag_noise': [0.9],
+'mppi_beta': [0.9],
+
+}
