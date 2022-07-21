@@ -15,7 +15,7 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     I'm not actually even sure that the correct state values are gotten
     """
     def __init__(self):
-        print("creatng class ChopsticksEnv")
+        print("creating class ChopsticksEnv")
         self.time = 0
         # this variable is used to render every once in a while?
         # but when I change this value the performance seems to change?
@@ -45,7 +45,6 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         self.act_rng = 0.5 * np.ptp(self.model.actuator_ctrlrange, axis=1)
         assert self.act_mid.shape[0] == self.act_rng.shape[0] == self.n_jnt
 
-        print(f"self.init_qpos: {self.init_qpos}")
 
 
 
@@ -66,9 +65,11 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         else:
             batch_mode = True
 
+        assert observations.shape[1] == self.n_dofs
         # recover data
-        object_pos = observations[:, 12:15]
-        object_z = object_pos[:, 2]
+        object_qpos = observations[:, 12:15]
+        # second joint in object is the slide joint for z axis
+        object_z = object_qpos[:, 1]
 
         # finish episode when object is lifted above a threshold
         dones = [bool(height > 0.1) for height in object_z]
@@ -84,7 +85,7 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         what is this and how is it different from get_reward?
         """
         object_pos = obs[12:15]
-        object_z = object_pos[2]
+        object_z = object_pos[1]
         return object_z
 
     def step(self, action):
