@@ -45,9 +45,6 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         self.act_rng = 0.5 * np.ptp(self.model.actuator_ctrlrange, axis=1)
         assert self.act_mid.shape[0] == self.act_rng.shape[0] == self.n_jnt
 
-
-
-
     def get_reward(self, observations, actions):
         """
         Reward function for the chopsticks environment.
@@ -65,28 +62,29 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         else:
             batch_mode = True
 
-        assert observations.shape[1] == self.n_dofs
-        # recover data
-        object_qpos = observations[:, 12:15]
+        # pos and vel, so observation is twice the number of dofs
+        assert observations.shape[1] == self.n_dofs * 2
+        # recover object location (joint position)
+        object_qpos = observations[:, 2*self.n_jnt:2*self.n_jnt+self.n_obj]
         # second joint in object is the slide joint for z axis
-        object_z = object_qpos[:, 1]
+        heights = object_qpos[:, 1]
 
-        # finish episode when object is lifted above a threshold
-        dones = [bool(height > 0.1) for height in object_z]
-        reward = object_z  # object higher = better
+        dones = [False] * observations.shape[0]
+        # object higher = better
+        # add bonus when height of object above 0.1
+        reward = heights + 1 * (heights > 0.1)
     
         if not batch_mode:
             return reward[0], dones[0]
         return reward, dones
         
-
     def get_score(self, obs):
         """
         what is this and how is it different from get_reward?
         """
-        object_pos = obs[12:15]
-        object_z = object_pos[1]
-        return object_z
+        object_pos = obs[2*self.n_jnt:2*self.n_jnt+self.n_obj]
+        height = object_pos[1]
+        return height
 
     def step(self, action):
         action = np.clip(action, -1, 1)
@@ -102,12 +100,13 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         env_info = {"time": self.time,
                     "obs_dict": self.obs_dict,
+                    "reward": reward,
                     "score": score}
         return obs, reward, done, env_info
 
     def _get_obs(self):
         self.robot.get_obs(self, robot_noise_ratio=0, object_noise_ratio=0)
-        # I think this wont work
+        # cs = chopsticks
         time, cs_qp, cs_qv, obj_qp, obj_qv = self.robot.get_obs_from_cache(self, -1)
         assert len(cs_qp) == len(cs_qv) == 6
         assert len(obj_qp) == len(obj_qv) == 3
