@@ -6,11 +6,11 @@
             <position kp="20" ctrllimited="true"/>
             <!-- "armature" is rotor inertia and said to improve stability and physical accuracy? -->
             <!-- damping and armature values are arbitrary -->
-            <joint type="slide" limited="true" damping=".1" armature="0.001"/>
+            <joint type="slide" limited="true" damping=".5" armature="0.001"/>
         </default>
         <default class="hinge">
             <position kp="10" ctrllimited="true"/>
-            <joint type="hinge" limited="true" damping=".1" armature="0.001"/>
+            <joint type="hinge" limited="true" damping=".5" armature="0.001"/>
         </default>
     </default>
 
