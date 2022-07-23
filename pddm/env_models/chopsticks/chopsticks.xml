@@ -20,7 +20,7 @@
             <!-- one half of chopstick -->
             <geom name="cs0" type="cylinder" size="0.0025 0.15" pos="0 0 -0.15" rgba="0.65 0.16 0.16 1"/>
             <!-- <joint name="cs0_x" axis="1 0 0" range="-0.15 0.15" class="slide"/> -->
-            <joint name="cs0_z" axis="0 0 1" range="-0.05 0.2" class="slide"/>
+            <joint name="cs0_z" axis="0 0 1" range="-0.1 0.1" class="slide"/>
             <!-- <joint name="cs0_rot" axis="0 1 0" range="-1.5 1.5" class="hinge"/> -->
             <body name="cs1" pos="0.03 0 0">
                 <!-- other half of chopstick -->
@@ -56,7 +56,7 @@
     <actuator>
         <!-- copy over the joint range to ctrlrange here -->
         <!-- <position name="cs0_x" joint="cs0_x" class="slide" ctrlrange="-0.15 0.15"/> -->
-        <position name="cs0_z" joint="cs0_z" class="slide" ctrlrange="-0.05 0.2"/>
+        <position name="cs0_z" joint="cs0_z" class="slide" ctrlrange="-0.1 0.1"/>
         <!-- <position name="cs0_rot" joint="cs0_rot" class="hinge" ctrlrange="-1.5 1.5"/> -->
         <!-- <position name="cs1_x" joint="cs1_x" class="slide" ctrlrange="-0.07 0."/> -->
         <!-- <position name="cs1_z" joint=>"cs1_z" class="slide" ctrlrange="-0.03 0.03"/> -->

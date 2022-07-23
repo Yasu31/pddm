@@ -72,7 +72,7 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         dones = [False] * observations.shape[0]
         # object higher = better
         # add bonus when height of object above 0.1
-        reward = heights + 1 * (heights > 0.) + 1 * (heights > 0.1)
+        reward = heights + 0.1 * (heights > 0.) + 0.1 * (heights > 0.05)
     
         if not batch_mode:
             return reward[0], dones[0]
