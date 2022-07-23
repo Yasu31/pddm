@@ -20,9 +20,9 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         # this variable is used to render every once in a while?
         # but when I change this value the performance seems to change?
         # when this is set to 40 during training and to 4 in visualization it seems to create interesting movement... though I have no idea why...
-        self.skip = 40
+        self.skip = 5
 
-        self.n_jnt = 6
+        self.n_jnt = 2
         self.n_obj = 3  # DoFs of object
         self.n_dofs = self.n_jnt + self.n_obj
 
@@ -44,6 +44,8 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         self.act_mid = np.mean(self.model.actuator_ctrlrange, axis=1)
         self.act_rng = 0.5 * np.ptp(self.model.actuator_ctrlrange, axis=1)
         assert self.act_mid.shape[0] == self.act_rng.shape[0] == self.n_jnt
+
+        assert self.n_dofs == self.sim.data.qpos.shape[0] == self.sim.data.qvel.shape[0]
 
     def get_reward(self, observations, actions):
         """
@@ -108,8 +110,8 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         self.robot.get_obs(self, robot_noise_ratio=0, object_noise_ratio=0)
         # cs = chopsticks
         time, cs_qp, cs_qv, obj_qp, obj_qv = self.robot.get_obs_from_cache(self, -1)
-        assert len(cs_qp) == len(cs_qv) == 6
-        assert len(obj_qp) == len(obj_qv) == 3
+        assert len(cs_qp) == len(cs_qv) == self.n_jnt
+        assert len(obj_qp) == len(obj_qv) == self.n_obj
         self.time = time
 
         self.obs_dict = {}

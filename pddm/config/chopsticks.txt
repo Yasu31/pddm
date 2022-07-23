@@ -53,7 +53,7 @@
 ##########################
 
 ## MPC
-'horizon': [20],
+'horizon': [50],
 'num_control_samples': [700],
 'controller_type': ['mppi'],
 
