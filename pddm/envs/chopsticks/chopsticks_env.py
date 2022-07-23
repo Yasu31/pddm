@@ -11,8 +11,6 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     draws heavily from DClawTurnEnv
     python train.py --config ../config/chopsticks.txt --output_dir ../output
     python visualize_iteration.py --job_path ../output/chopsticks --iter_num 0
-
-    I'm not actually even sure that the correct state values are gotten
     """
     def __init__(self):
         print("creating class ChopsticksEnv")
@@ -20,7 +18,7 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         # this variable is used to render every once in a while?
         # but when I change this value the performance seems to change?
         # when this is set to 40 during training and to 4 in visualization it seems to create interesting movement... though I have no idea why...
-        self.skip = 5
+        self.skip = 10
 
         self.n_jnt = 2
         self.n_obj = 3  # DoFs of object
@@ -74,7 +72,7 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         dones = [False] * observations.shape[0]
         # object higher = better
         # add bonus when height of object above 0.1
-        reward = heights + 1 * (heights > 0.1)
+        reward = heights + 1 * (heights > 0.) + 1 * (heights > 0.1)
     
         if not batch_mode:
             return reward[0], dones[0]
