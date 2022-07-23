@@ -20,7 +20,7 @@ class ChopsticksEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         # when this is set to 40 during training and to 4 in visualization it seems to create interesting movement... though I have no idea why...
         self.skip = 10
 
-        self.n_jnt = 2
+        self.n_jnt = 4
         self.n_obj = 3  # DoFs of object
         self.n_dofs = self.n_jnt + self.n_obj
 
